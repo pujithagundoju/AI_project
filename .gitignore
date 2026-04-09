@@ -1,0 +1,49 @@
+# 🔹 Virtual Environments
+
+venv/
+myenv/
+
+# 🔹 Python cache files
+
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
+
+# 🔹 Jupyter Notebook checkpoints
+
+.ipynb_checkpoints/
+
+# 🔹 VS Code settings
+
+.vscode/
+
+# 🔹 Environment variables / secrets
+
+.env
+
+# 🔹 Large dataset files
+
+*.csv
+*.zip
+
+# 🔹 Model files (ML models are usually large)
+
+*.pkl
+
+# 🔹 Text/temp files
+
+*.txt
+
+# 🔹 Logs
+
+*.log
+
+# 🔹 OS files
+
+.DS_Store
+Thumbs.db
+Dataset/*
+data/*
+*.zip
+*.pkl

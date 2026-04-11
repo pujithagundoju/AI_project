@@ -3,10 +3,10 @@
 This folder is the repository test area for code under `src/`.
 
 Current tests:
-- `test_data_loader.py`: unit tests for all functions in `src/data_loader.py`
+- `data_loader_test.ipynb`: notebook tests for `src/data_loader.py`
+- `preprocessing_test.ipynb`: notebook tests for `src/preprocessing.py`
+- `feature_extraction_test.ipynb`: notebook tests for `src/feature_extraction.py`
 
-Run all tests:
+How to run tests:
 
-```bash
-python -m unittest discover -s tests -p "test_*.py" -v
-```
+- Open each notebook in this folder and run all cells.

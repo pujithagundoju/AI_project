@@ -5,7 +5,7 @@ from typing import Any, Sequence
 
 from data_loader import load_train_test_data
 from feature_extraction import extract_train_test_features
-from model_training import get_best_model
+from model_training import compare_model_feature_combinations, get_model_candidates, train_model
 from preprocessing import preprocess_dataframe, preprocess_text
 from similarity_retrieval import retrieval_report
 
@@ -25,28 +25,65 @@ def run_final_pipeline_result(
     train_df = preprocess_dataframe(train_df, text_column=text_column)
     test_df = preprocess_dataframe(test_df, text_column=text_column)
 
+    results_df = compare_model_feature_combinations(
+        train_df=train_df,
+        test_df=test_df,
+        text_column=text_column,
+        label_column=label_column,
+        feature_settings=[
+            {
+                "max_features": max_features,
+                "ngram_range": (1, 2),
+                "min_df": 1,
+                "max_df": 0.95,
+                "analyzer": "word",
+                "stop_words": "english",
+            },
+            {
+                "max_features": max_features,
+                "ngram_range": (1, 3),
+                "min_df": 2,
+                "max_df": 0.9,
+                "analyzer": "word",
+                "stop_words": "english",
+            },
+            {
+                "max_features": max_features,
+                "ngram_range": (3, 5),
+                "min_df": 2,
+                "max_df": 1.0,
+                "analyzer": "char_wb",
+                "stop_words": None,
+            },
+        ],
+    )
+
+    best_row = results_df.iloc[0]
+    best_model_name = str(best_row["model"])
+    best_feature_settings = {
+        "max_features": int(best_row["max_features"]),
+        "ngram_range": tuple(best_row["ngram_range"]),
+        "min_df": int(best_row["min_df"]),
+        "max_df": float(best_row["max_df"]),
+        "analyzer": str(best_row["analyzer"]),
+        "stop_words": best_row["stop_words"],
+    }
+
     vectorizer, x_train, x_test = extract_train_test_features(
         train_df=train_df,
         test_df=test_df,
         text_column=text_column,
-        max_features=max_features,
-        ngram_range=(1, 2),
-        min_df=1,
-        max_df=0.95,
-        analyzer="word",
-        stop_words="english",
+        max_features=best_feature_settings["max_features"],
+        ngram_range=best_feature_settings["ngram_range"],
+        min_df=best_feature_settings["min_df"],
+        max_df=best_feature_settings["max_df"],
+        analyzer=best_feature_settings["analyzer"],
+        stop_words=best_feature_settings["stop_words"],
     )
 
-    best_model_name, best_model, results_df = get_best_model(
-        x_train=x_train,
-        y_train=train_df[label_column],
-        x_test=x_test,
-        y_test=test_df[label_column],
-    )
-    best_metrics_row = results_df.iloc[0].to_dict()
-    top_models_df = results_df[
-        ["model", "accuracy", "balanced_accuracy", "precision", "recall", "f1_score"]
-    ].head(top_n_models)
+    best_model = train_model(get_model_candidates()[best_model_name], x_train, train_df[label_column])
+    best_metrics_row = best_row.to_dict()
+    top_models_df = results_df[["model", "accuracy", "balanced_accuracy", "precision", "recall", "f1_score"]].head(top_n_models)
 
     resumes = list(new_resume_texts) if new_resume_texts is not None else [
         "Data scientist with python, machine learning, statistics and NLP.",
@@ -66,6 +103,7 @@ def run_final_pipeline_result(
     return {
         "classification": {
             "best_model_name": best_model_name,
+            "best_feature_settings": best_feature_settings,
             "best_model_metrics": {
                 "accuracy": float(best_metrics_row["accuracy"]),
                 "balanced_accuracy": float(best_metrics_row["balanced_accuracy"]),

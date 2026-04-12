@@ -16,13 +16,21 @@ def create_tfidf_vectorizer(
     max_features: int = 5000,
     ngram_range: tuple[int, int] = (1, 2),
     min_df: int = 1,
+    max_df: float = 1.0,
+    analyzer: str = "word",
+    stop_words: str | list[str] | None = None,
 ) -> TfidfVectorizer:
     """Create a TF-IDF vectorizer with practical defaults for resume text."""
     return TfidfVectorizer(
         max_features=max_features,
         ngram_range=ngram_range,
         min_df=min_df,
+        max_df=max_df,
+        analyzer=analyzer,
+        stop_words=stop_words,
         sublinear_tf=True,
+        strip_accents="unicode",
+        dtype="float32",
     )
 
 
@@ -50,6 +58,9 @@ def extract_train_test_features(
     max_features: int = 5000,
     ngram_range: tuple[int, int] = (1, 2),
     min_df: int = 1,
+    max_df: float = 1.0,
+    analyzer: str = "word",
+    stop_words: str | list[str] | None = None,
 ):
     """Fit on train text and transform both train and test text."""
     if text_column not in train_df.columns:
@@ -61,6 +72,9 @@ def extract_train_test_features(
         max_features=max_features,
         ngram_range=ngram_range,
         min_df=min_df,
+        max_df=max_df,
+        analyzer=analyzer,
+        stop_words=stop_words,
     )
     train_texts = train_df[text_column].fillna("").astype(str)
     test_texts = test_df[text_column].fillna("").astype(str)

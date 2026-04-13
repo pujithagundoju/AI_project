@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Any, Sequence
+
+# Add src directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
 
 from data_loader import load_train_test_data
 from feature_extraction import extract_train_test_features

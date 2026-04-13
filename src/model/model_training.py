@@ -10,7 +10,7 @@ from sklearn.naive_bayes import ComplementNB, MultinomialNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
 
-from feature_extraction import extract_train_test_features
+from ..feature_extraction import extract_train_test_features
 
 
 def get_model_candidates(random_state: int = 42) -> dict[str, Any]:

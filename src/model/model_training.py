@@ -23,8 +23,6 @@ def get_model_candidates(random_state: int = 42) -> dict[str, Any]:
             max_iter=3000,
             class_weight="balanced",
             solver="lbfgs",
-            multi_class="auto",
-            n_jobs=-1,
             random_state=random_state,
         ),
         "RandomForest": RandomForestClassifier(
@@ -41,7 +39,7 @@ def get_feature_settings() -> list[dict[str, Any]]:
     """Return compact TF-IDF configurations for fast experiments."""
     return [
         {
-            "max_features": 8000,
+            "max_features": 10000,
             "ngram_range": (1, 2),
             "min_df": 2,
             "max_df": 0.95,
@@ -49,7 +47,7 @@ def get_feature_settings() -> list[dict[str, Any]]:
             "stop_words": "english",
         },
         {
-            "max_features": 12000,
+            "max_features": 10000,
             "ngram_range": (1, 3),
             "min_df": 2,
             "max_df": 0.9,

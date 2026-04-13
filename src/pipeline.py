@@ -140,6 +140,7 @@ if __name__ == "__main__":
 
     warnings.filterwarnings("ignore", category=UserWarning, module=r"sklearn\.feature_extraction\.text")
     warnings.filterwarnings("ignore", category=FutureWarning, module=r"sklearn\.utils\.deprecation")
+    warnings.filterwarnings("ignore", category=FutureWarning, module=r"sklearn\.linear_model\._logistic")
 
     project_root = Path(__file__).resolve().parent.parent
     output = run_final_pipeline_result(

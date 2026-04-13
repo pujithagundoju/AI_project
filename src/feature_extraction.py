@@ -13,7 +13,7 @@ def _normalize_texts(texts: Iterable[str]) -> list[str]:
 
 
 def create_tfidf_vectorizer(
-    max_features: int = 5000,
+    max_features: int = 10000,
     ngram_range: tuple[int, int] = (1, 2),
     min_df: int = 1,
     max_df: float = 1.0,
@@ -55,7 +55,7 @@ def extract_train_test_features(
     train_df: pd.DataFrame,
     test_df: pd.DataFrame,
     text_column: str = "text",
-    max_features: int = 5000,
+    max_features: int = 10000,
     ngram_range: tuple[int, int] = (1, 2),
     min_df: int = 1,
     max_df: float = 1.0,

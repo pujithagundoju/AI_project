@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from data_loader import load_train_test_data
 from feature_extraction import extract_train_test_features
-from model.model_training import compare_model_feature_combinations, get_model_candidates, train_model
+from model.model_training_1 import compare_model_feature_combinations, get_model_candidates, train_model
 from preprocessing import preprocess_dataframe, preprocess_text
 from similarity_retrieval import retrieval_report
 

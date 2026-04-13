@@ -6,27 +6,45 @@ from typing import Any
 import pandas as pd
 from sklearn.base import clone
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression, RidgeClassifier
+from sklearn.linear_model import LogisticRegression, PassiveAggressiveClassifier, RidgeClassifier, SGDClassifier
 from sklearn.metrics import accuracy_score, balanced_accuracy_score, precision_recall_fscore_support
+from sklearn.naive_bayes import ComplementNB
 from sklearn.svm import LinearSVC
 
 from feature_extraction import extract_train_test_features
 
 
 def get_model_candidates(random_state: int = 42) -> dict[str, Any]:
-    """Return fast and strong baseline models for resume classification."""
+    """Return tuned model candidates targeting stronger resume-classification accuracy."""
     return {
-        "LinearSVM": LinearSVC(C=2.0, class_weight="balanced", random_state=random_state),
-        "RidgeClassifier": RidgeClassifier(alpha=1.0, class_weight="balanced", random_state=random_state),
+        "LinearSVM": LinearSVC(C=2.5, class_weight="balanced", random_state=random_state),
+        "RidgeClassifier": RidgeClassifier(alpha=0.6, class_weight="balanced", random_state=random_state),
         "LogisticRegression": LogisticRegression(
-            C=6.0,
-            max_iter=3000,
+            C=8.0,
+            max_iter=5000,
             class_weight="balanced",
-            solver="lbfgs",
+            solver="saga",
+            random_state=random_state,
+        ),
+        "PassiveAggressive": PassiveAggressiveClassifier(
+            C=0.8,
+            class_weight="balanced",
+            max_iter=5000,
+            tol=1e-4,
+            random_state=random_state,
+        ),
+        "ComplementNB": ComplementNB(alpha=0.15),
+        "SGDClassifier": SGDClassifier(
+            loss="modified_huber",
+            alpha=3e-5,
+            penalty="l2",
+            class_weight="balanced",
+            max_iter=6000,
+            tol=1e-4,
             random_state=random_state,
         ),
         "RandomForest": RandomForestClassifier(
-            n_estimators=300,
+            n_estimators=700,
             max_features="sqrt",
             class_weight="balanced_subsample",
             n_jobs=-1,
@@ -36,12 +54,12 @@ def get_model_candidates(random_state: int = 42) -> dict[str, Any]:
 
 
 def get_feature_settings() -> list[dict[str, Any]]:
-    """Return compact TF-IDF configurations for fast experiments."""
+    """Return TF-IDF settings tuned for stronger text-classification performance."""
     return [
         {
             "max_features": 10000,
             "ngram_range": (1, 2),
-            "min_df": 2,
+            "min_df": 1,
             "max_df": 0.95,
             "analyzer": "word",
             "stop_words": "english",
@@ -53,6 +71,14 @@ def get_feature_settings() -> list[dict[str, Any]]:
             "max_df": 0.9,
             "analyzer": "word",
             "stop_words": "english",
+        },
+        {
+            "max_features": 10000,
+            "ngram_range": (3, 5),
+            "min_df": 2,
+            "max_df": 1.0,
+            "analyzer": "char_wb",
+            "stop_words": None,
         },
     ]
 
@@ -102,8 +128,8 @@ def compare_models(x_train, y_train, x_test, y_test, models: dict[str, Any] | No
         rows.append({"model": name, **metrics, "train_time_sec": round(float(elapsed), 4)})
 
     results_df = pd.DataFrame(rows).sort_values(
-        by=["accuracy", "balanced_accuracy", "f1_score", "train_time_sec"],
-        ascending=[False, False, False, True],
+        by=["accuracy", "balanced_accuracy", "f1_score", "precision", "train_time_sec"],
+        ascending=[False, False, False, False, True],
     ).reset_index(drop=True)
     return results_df, trained_models
 
@@ -137,8 +163,8 @@ def compare_model_feature_combinations(
             rows.append({**row.to_dict(), **setting})
 
     return pd.DataFrame(rows).sort_values(
-        by=["accuracy", "balanced_accuracy", "f1_score", "train_time_sec"],
-        ascending=[False, False, False, True],
+        by=["accuracy", "balanced_accuracy", "f1_score", "precision", "train_time_sec"],
+        ascending=[False, False, False, False, True],
     ).reset_index(drop=True)
 
 

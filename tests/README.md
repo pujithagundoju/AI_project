@@ -6,7 +6,7 @@ Current tests:
 - `data_loader_test.ipynb`: notebook tests for `src/data_loader.py`
 - `preprocessing_test.ipynb`: notebook tests for `src/preprocessing.py`
 - `feature_extraction_test.ipynb`: notebook tests for `src/feature_extraction.py`
-- `model_training_test.ipynb`: notebook tests for `src/model_training.py`
+- `model_training_test.ipynb`: notebook tests for `src/model/model_training.py`
 - `testing_notebook.ipynb`: end-to-end testing notebook for loading, preprocessing, feature extraction, and model training
 - `similarity_retrieval_test.ipynb`: notebook tests for `src/similarity_retrieval.py`
 

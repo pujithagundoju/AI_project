@@ -87,7 +87,18 @@ def run_final_pipeline_result(
 
     best_model = train_model(get_model_candidates()[best_model_name], x_train, train_df[label_column])
     best_metrics_row = best_row.to_dict()
-    top_models_df = results_df[["model", "accuracy", "balanced_accuracy", "precision", "recall", "f1_score"]].head(top_n_models)
+    top_models_df = results_df[
+        [
+            "model",
+            "accuracy",
+            "balanced_accuracy",
+            "f1_score",
+            "f1_weighted",
+            "max_features",
+            "ngram_range",
+            "analyzer",
+        ]
+    ].head(top_n_models)
 
     resumes = list(new_resume_texts) if new_resume_texts is not None else [
         "Data scientist with python, machine learning, statistics and NLP.",

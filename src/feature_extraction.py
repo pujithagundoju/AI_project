@@ -30,7 +30,6 @@ def create_tfidf_vectorizer(
         stop_words=stop_words,
         sublinear_tf=True,
         strip_accents=None,
-        dtype="float32",
     )
 
 
